@@ -19,6 +19,7 @@ import (
 	"github.com/chromedp/cdproto/network"
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
+	"github.com/joho/godotenv"
 	"github.com/yosssi/gohtml"
 )
 
@@ -29,8 +30,17 @@ var (
 )
 
 func main() {
-	// 目标 URL（替换为你的 Vue3 页面 URL）
-	targetURL := "https://k3b5wjph.top/" // 请替换为实际 URL，例如 http://localhost:3000
+	// 从 .env 文件加载环境变量
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// 从环境变量获取目标 URL
+	targetURL := os.Getenv("TARGET_URL")
+	if targetURL == "" {
+		log.Fatal("TARGET_URL is not set in .env file")
+	}
 
 	// 创建 chromedp 上下文
 	opts := append(chromedp.DefaultExecAllocatorOptions[:],
@@ -66,7 +76,7 @@ func main() {
 	})
 
 	// 定义 chromedp 任务
-	err := chromedp.Run(ctx,
+	err = chromedp.Run(ctx,
 		// 启用网络请求拦截
 		network.Enable(),
 		// 导航到目标 URL
